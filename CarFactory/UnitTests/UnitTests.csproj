@@ -19,6 +19,7 @@
     <ProjectReference Include="..\CarFactory-Domain\CarFactory-Domain.csproj" />
     <ProjectReference Include="..\CarFactory-Engine\CarFactory-Engine.csproj" />
     <ProjectReference Include="..\CarFactory-Paint\CarFactory-Paint.csproj" />
+    <ProjectReference Include="..\CarFactory-Wheels\CarFactory-Wheels.csproj" />
   </ItemGroup>
 
 </Project>
