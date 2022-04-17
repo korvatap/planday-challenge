@@ -20,15 +20,12 @@ namespace CarFactory_Interior
             _speakerBuilder = speakerBuilder;
         }
 
-        public Interior GetInterior(CarSpecification specification)
-        {
-            
-            return new Interior
+        public Interior GetInterior(CarSpecification specification) => new()
             {
                 Dashboard = _dashboardBuilder.Build(),
                 Seats = _seatBuilder.Build(),
-                FrontWindowSpeakers = _speakerBuilder.BuildFrontWindowSpeakers(specification.FrontWindowSpeakers)
+                FrontWindowSpeakers = _speakerBuilder.BuildFrontWindowSpeakers(specification.FrontWindowSpeakers),
+                DoorSpeakers = _speakerBuilder.BuildDoorSpeakers(specification.DoorSpeakers)
             };
-        }
     }
 }

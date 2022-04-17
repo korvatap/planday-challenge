@@ -7,5 +7,6 @@ namespace CarFactory_Interior.Interfaces
     public interface ISpeakerBuilder
     {
         List<Speaker> BuildFrontWindowSpeakers(IEnumerable<SpeakerSpecification> specification);
+        List<Speaker> BuildDoorSpeakers(IEnumerable<SpeakerSpecification> specification);
     }
 }
