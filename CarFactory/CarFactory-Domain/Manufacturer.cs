@@ -2,7 +2,7 @@
 {
     public enum Manufacturer
     {
-        Planborghini = 1,
+        Planborgini = 1,
         PlandayMotorWorks = 2,
         PlanfaRomeo = 3,
         AstonPlanday = 4,

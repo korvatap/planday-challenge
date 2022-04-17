@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using CarFactory_Domain;
 using CarFactory_Factory;
@@ -60,7 +61,7 @@ namespace CarFactory.Controllers
                         case "single":
                             paint = new SingleColorPaintJob(baseColor);
                             break;
-                        case "strie":
+                        case "stripe":
                             paint = new StripedPaintJob(baseColor, Color.FromName(spec.Specification.Paint.StripeColor));
                             break;
                         case "dot":
