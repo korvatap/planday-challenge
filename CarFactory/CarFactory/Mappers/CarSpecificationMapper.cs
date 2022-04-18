@@ -31,7 +31,7 @@ namespace CarFactory.Mappers
 
                     PaintJob? paint = null;
                     var baseColor = Color.FromName(spec.Specification.Paint.BaseColor);
-                    switch (spec.Specification.Paint.Type)
+                    switch (spec.Specification.Paint.Type.ToLower())
                     {
                         case "single":
                             paint = new SingleColorPaintJob(baseColor);
