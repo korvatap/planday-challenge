@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CarFactory.Mappers;
 using CarFactory_Assembly;
 using CarFactory_Chassis;
 using CarFactory_Engine;
@@ -53,7 +54,7 @@ namespace CarFactory
             });
 
             services.AddSingleton<IMemoryCache, MemoryCache>();
-
+            
             services.AddTransient<ICarAssembler, CarAssembler>();
             services.AddScoped<IChassisProvider, ChassisProvider>();
             services.AddScoped<IEngineProvider, EngineProvider>();
@@ -71,7 +72,7 @@ namespace CarFactory
             services.AddScoped<IGetPistons, GetPistons>();
             services.AddScoped<IGetChassisRecipeQuery, GetChassisRecipeQuery>();
             services.AddScoped<IGetEngineSpecificationQuery, GetEngineSpecificationQuery>();
-
+            services.AddScoped<ICarSpecificationMapper, CarSpecificationMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
