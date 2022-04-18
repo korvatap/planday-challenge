@@ -1,14 +1,12 @@
 ﻿using CarFactory.Utilities;
 using CarFactory_Domain;
 using CarFactory_Domain.Engine;
-using CarFactory_Domain.Engine.EngineSpecifications;
 using CarFactory_Factory;
 using CarFactory_Storage;
 using CarFactory_SubContractor;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Linq;
-using System.Threading;
 
 namespace CarFactory_Engine
 {
@@ -16,19 +14,21 @@ namespace CarFactory_Engine
     {
         private readonly IGetPistons _getPistons;
         private readonly ISteelSubcontractor _steelSubContractor;
-        private int SteelInventory = 0;
+        private int _steelInventory;
         private readonly IGetEngineSpecificationQuery _getEngineSpecification;
         private readonly IMemoryCache _cache;
 
-        public EngineProvider(IGetPistons getPistons, ISteelSubcontractor steelSubContractor, 
-            IGetEngineSpecificationQuery getEngineSpecification, IMemoryCache cache)
+        public EngineProvider(
+            IGetPistons getPistons,
+            ISteelSubcontractor steelSubContractor, 
+            IGetEngineSpecificationQuery getEngineSpecification,
+            IMemoryCache cache)
         {
             _getPistons = getPistons;
             _steelSubContractor = steelSubContractor;
             _getEngineSpecification = getEngineSpecification ;
             _cache = cache;
         }
-
 
         public Engine GetEngine(Manufacturer manufacturer)
         {
@@ -69,13 +69,13 @@ namespace CarFactory_Engine
 
         private int GetSteel(int amount)
         {
-            if(amount > SteelInventory)
+            if(amount > _steelInventory)
             {
-                var missingSteel = amount - SteelInventory;
-                SteelInventory += _steelSubContractor.OrderSteel(missingSteel).Sum(sd => sd.Amount);
+                var missingSteel = amount - _steelInventory;
+                _steelInventory += _steelSubContractor.OrderSteel(missingSteel).Sum(sd => sd.Amount);
             }
 
-            SteelInventory -= amount;
+            _steelInventory -= amount;
 
             return amount;
         }
@@ -108,7 +108,5 @@ namespace CarFactory_Engine
                 engine.HasSparkPlugs = true;
             }   
         }
-
-
     }
 }

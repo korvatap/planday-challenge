@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CarFactory_Assembly;
-using CarFactory_Chasis;
+using CarFactory_Chassis;
 using CarFactory_Engine;
 using CarFactory_Factory;
 using CarFactory_Interior;

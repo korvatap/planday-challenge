@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>CarFactory_Chasis</RootNamespace>
+        <RootNamespace>CarFactory_Chassis</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

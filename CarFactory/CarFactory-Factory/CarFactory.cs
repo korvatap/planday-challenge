@@ -2,17 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using CarFactory_Storage;
 
 namespace CarFactory_Factory
 {
     public class CarFactory : ICarFactory
     {
-        private IChassisProvider _chassisProvider;
-        private IEngineProvider _engineProvider;
-        private IPainter _painter;
-        private IInteriorProvider _interiorProvider;
-        private IWheelProvider _wheelProvider;
-        private ICarAssembler _carAssembler;
+        private readonly IChassisProvider _chassisProvider;
+        private readonly IEngineProvider _engineProvider;
+        private readonly IPainter _painter;
+        private readonly IInteriorProvider _interiorProvider;
+        private readonly IWheelProvider _wheelProvider;
+        private readonly ICarAssembler _carAssembler;
         private IStorageProvider _storageProvider;
 
         public CarFactory(

@@ -1,11 +1,7 @@
-﻿using CarFactory_Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using CarFactory_Domain;
 
-namespace CarFactory_Chasis
+namespace CarFactory_Chassis
 {
     public class ChassisWelder
     {

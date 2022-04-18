@@ -1,14 +1,12 @@
-﻿using CarFactory_Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CarFactory_Domain;
 using CarFactory_Factory;
 using CarFactory_Storage;
 using CarFactory_SubContractor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarFactory_Chasis
+namespace CarFactory_Chassis
 {
     public class ChassisProvider : IChassisProvider
     {

@@ -2,7 +2,6 @@
 using System.Data.SQLite;
 using System.Linq;
 using CarFactory_Domain;
-using CarFactory_Factory;
 
 namespace CarFactory_Storage
 {

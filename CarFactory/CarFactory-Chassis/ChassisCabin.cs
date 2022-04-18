@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarFactory_Chasis
+namespace CarFactory_Chassis
 {
     public class ChassisCabin : ChassisPart
     {
@@ -15,21 +11,15 @@ namespace CarFactory_Chasis
 
         public override string GetChassisType()
         {
-            switch (_typeId)
+            return _typeId switch
             {
-                case 0:
-                    return "Two Door";
-                case 1:
-                    return "Four Door";
-                default:
-                    throw new Exception("Unknown cabin type");
-            }
+                0 => "Two Door",
+                1 => "Four Door",
+                _ => throw new Exception("Unknown cabin type")
+            };
         }
 
-        public override string GetType()
-        {
-            return "ChassisCabin";
-        }
+        public override string GetType() => "ChassisCabin";
     }
 
 }

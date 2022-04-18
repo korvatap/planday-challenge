@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SQLite;
 
-namespace CarFactory_Factory
+namespace CarFactory_Storage
 {
     public interface IStorageProvider
     {

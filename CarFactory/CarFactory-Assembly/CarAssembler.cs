@@ -30,7 +30,7 @@ namespace CarFactory_Assembly
             car.SetCarLockSettings(lockSetting);
         }
 
-        private long GoBig(long m, long n)
+        private static long GoBig(long m, long n)
         {
             if (m > 0)
             {
@@ -47,6 +47,4 @@ namespace CarFactory_Assembly
             throw new ArgumentOutOfRangeException();
         }
     }
-    
-    
 }
