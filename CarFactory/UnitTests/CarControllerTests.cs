@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using CarFactory.Controllers;
 using CarFactory.Mappers;
 using CarFactory.Models;
@@ -17,7 +18,7 @@ namespace UnitTests
     public class CarControllerTests
     {
         [Theory, AutoFakeData]
-        public void CarController_Post_ReturnsExpected(
+        public async Task CarController_Post_ReturnsExpected(
             ICarFactory carFactory,
             ICarSpecificationMapper carSpecificationMapper,
             BuildCarInputModel inputModel,
@@ -42,7 +43,7 @@ namespace UnitTests
             var sut = new CarController(carFactory, carSpecificationMapper);
 
             // Act
-            var response = sut.Post(inputModel);
+            var response = await sut.Post(inputModel);
 
             // Assert
             response.Should().BeOfType<BuildCarOutputModel>();

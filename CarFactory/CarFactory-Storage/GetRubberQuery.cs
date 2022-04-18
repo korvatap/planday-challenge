@@ -20,7 +20,7 @@ namespace CarFactory_Storage
             using var cmd = new SQLiteCommand(conn);
             
             cmd.CommandText = @"Select * from manufacturer_part";
-            using SQLiteDataReader rdr = cmd.ExecuteReader();
+            using var rdr = cmd.ExecuteReader();
 
             var parts = new List<Part>();
             while (rdr.Read())

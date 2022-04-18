@@ -7,6 +7,7 @@ using CarFactory_SubContractor;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CarFactory_Engine
 {
@@ -20,29 +21,31 @@ namespace CarFactory_Engine
 
         public EngineProvider(
             IGetPistons getPistons,
-            ISteelSubcontractor steelSubContractor, 
+            ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
             IMemoryCache cache)
         {
             _getPistons = getPistons;
             _steelSubContractor = steelSubContractor;
-            _getEngineSpecification = getEngineSpecification ;
+            _getEngineSpecification = getEngineSpecification;
             _cache = cache;
         }
 
-        public Engine GetEngine(Manufacturer manufacturer)
+        public async Task<Engine> GetEngine(Manufacturer manufacturer)
         {
             var specification = _getEngineSpecification.GetForManufacturer(manufacturer);
-                        
-            var engineBlock = MakeEngineBlock(specification.CylinderCount);
 
-            var engine = new Engine(engineBlock, specification.Name);
+            var engineBlockTask = MakeEngineBlock(specification.CylinderCount);
+            var pistonsTask = _getPistons.Get(specification.CylinderCount);
 
-            var pistons = _getPistons.Get(specification.CylinderCount);
+            await Task.WhenAll(engineBlockTask, pistonsTask);
+            
+            var engine = new Engine(engineBlockTask.Result, specification.Name);
 
-            InstallPistons(engine, pistons);
+            var installPistonsTask = InstallPistons(engine, pistonsTask.Result);
+            var installFuelInjectorsTask = InstallFuelInjectors(engine, specification.PropulsionType);
 
-            InstallFuelInjectors(engine, specification.PropulsionType);
+            await Task.WhenAll(installPistonsTask, installFuelInjectorsTask);
 
             InstallSparkPlugs(engine);
 
@@ -52,24 +55,27 @@ namespace CarFactory_Engine
             return engine;
         }
 
-        private EngineBlock MakeEngineBlock(int cylinders)
+        private Task<EngineBlock> MakeEngineBlock(int cylinders)
         {
-            var requiredSteel = cylinders * EngineBlock.RequiredSteelPerCylinder;
+            return Task.Run(() =>
+            {
+                var requiredSteel = cylinders * EngineBlock.RequiredSteelPerCylinder;
 
-            var steel = GetSteel(requiredSteel);
+                var steel = GetSteel(requiredSteel);
 
-            var engineBlock = new EngineBlock(steel);
+                var engineBlock = new EngineBlock(steel);
 
-            if (cylinders != engineBlock.CylinderCount)
-                throw new InvalidOperationException("Engine block does not have the required amount of cylinders");
+                if (cylinders != engineBlock.CylinderCount)
+                    throw new InvalidOperationException("Engine block does not have the required amount of cylinders");
 
-            return engineBlock;
+                return engineBlock;
+            });
         }
 
 
         private int GetSteel(int amount)
         {
-            if(amount > _steelInventory)
+            if (amount > _steelInventory)
             {
                 var missingSteel = amount - _steelInventory;
                 _steelInventory += _steelSubContractor.OrderSteel(missingSteel).Sum(sd => sd.Amount);
@@ -80,20 +86,24 @@ namespace CarFactory_Engine
             return amount;
         }
 
-        private void InstallFuelInjectors(Engine engine, Propulsion propulsionType)
+        private Task InstallFuelInjectors(Engine engine, Propulsion propulsionType)
         {
             //Do work
-            SlowWorker.FakeWorkingForMillis(25 * engine.EngineBlock.CylinderCount);
-
-            engine.PropulsionType = propulsionType;
+            return Task.Run(() =>
+            {
+                SlowWorker.FakeWorkingForMillis(24 * engine.EngineBlock.CylinderCount);
+                engine.PropulsionType = propulsionType;
+            });
         }
 
-        private void InstallPistons(Engine engine, int pistons)
+        private Task InstallPistons(Engine engine, int pistons)
         {
             //Do work
-            SlowWorker.FakeWorkingForMillis(25 * pistons);
-
-            engine.PistonsCount = pistons;
+            return Task.Run(() =>
+            {
+                SlowWorker.FakeWorkingForMillis(25 * pistons);
+                engine.PistonsCount = pistons;
+            });
         }
 
         private void InstallSparkPlugs(Engine engine)
@@ -101,12 +111,8 @@ namespace CarFactory_Engine
             if (!engine.PropulsionType.HasValue)
                 throw new InvalidOperationException($"Propulsion type must be known before installing spark plugs");
 
-            if(engine.PropulsionType.Value == Propulsion.Gasoline)
-            {
-                //Do work 
-                SlowWorker.FakeWorkingForMillis(engine.EngineBlock.CylinderCount * 15);
-                engine.HasSparkPlugs = true;
-            }   
+            SlowWorker.FakeWorkingForMillis(engine.EngineBlock.CylinderCount * 15);
+            engine.HasSparkPlugs = true;
         }
     }
 }

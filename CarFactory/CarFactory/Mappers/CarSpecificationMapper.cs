@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CarFactory.Controllers;
 using CarFactory.Models;
 using CarFactory_Domain;
 using CarFactory_Factory;
@@ -29,7 +28,7 @@ namespace CarFactory.Mappers
                         throw new ArgumentException("Must give an odd number of doors");
                     }
 
-                    PaintJob? paint = null;
+                    PaintJob? paint;
                     var baseColor = Color.FromName(spec.Specification.Paint.BaseColor);
                     switch (spec.Specification.Paint.Type.ToLower())
                     {
@@ -38,14 +37,13 @@ namespace CarFactory.Mappers
                             break;
                         case "stripe":
                             paint = new StripedPaintJob(baseColor,
-                                Color.FromName(spec.Specification.Paint.StripeColor));
+                                Color.FromName(spec.Specification.Paint.StripeColor!));
                             break;
                         case "dot":
-                            paint = new DottedPaintJob(baseColor, Color.FromName(spec.Specification.Paint.DotColor));
+                            paint = new DottedPaintJob(baseColor, Color.FromName(spec.Specification.Paint.DotColor!));
                             break;
                         default:
-                            throw new ArgumentException(string.Format("Unknown paint type %",
-                                spec.Specification.Paint.Type));
+                            throw new ArgumentException($"Unknown paint type {spec.Specification.Paint.Type}");
                     }
 
                     var dashboardSpeakers = spec.Specification.FrontWindowSpeakers

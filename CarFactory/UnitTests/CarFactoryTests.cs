@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CarFactory_Domain;
 using CarFactory_Domain.Engine;
 using CarFactory_Factory;
@@ -13,7 +14,7 @@ namespace UnitTests
     public class CarFactoryTests
     {
         [Theory, AutoFakeData]
-        public void CarFactory_Test(
+        public async Task CarFactory_Test(
             IChassisProvider chassisProvider,
             IEngineProvider engineProvider,
             IPainter painter,
@@ -53,7 +54,7 @@ namespace UnitTests
             A.CallTo(() => painter.PaintCar(A<Car>._, A<PaintJob>._)).Returns(expected);
 
             // Act
-            var cars = sut.BuildCars(new[] {carSpecification}).ToList();
+            var cars = (await sut.BuildCars(new[] {carSpecification})).ToList();
 
             // Assert
             cars.Count.Should().Be(1);

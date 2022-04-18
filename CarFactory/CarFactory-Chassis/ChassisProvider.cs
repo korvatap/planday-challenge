@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CarFactory_Domain;
 using CarFactory_Factory;
 using CarFactory_Storage;
@@ -18,28 +19,34 @@ namespace CarFactory_Chassis
             _steelSubcontractor = steelSubcontractor;
             _chassisRecipeQuery = chassisRecipeQuery;
         }
-        public Chassis GetChassis(Manufacturer manufacturer, int numberOfDoors)
+
+        public Task<Chassis> GetChassis(Manufacturer manufacturer, int numberOfDoors)
         {
-            var chassisRecipe = _chassisRecipeQuery.Get(manufacturer);
+            return Task.Run(() =>
+            {
+                var chassisRecipe = _chassisRecipeQuery.Get(manufacturer);
 
-            var chassisParts = new List<ChassisPart>();
-            chassisParts.Add(new ChassisBack(chassisRecipe.BackId));
-            chassisParts.Add(new ChassisCabin(chassisRecipe.CabinId));
-            chassisParts.Add(new ChassisFront(chassisRecipe.FrontId));
+                var chassisParts = new List<ChassisPart>
+                {
+                    new ChassisBack(chassisRecipe.BackId),
+                    new ChassisCabin(chassisRecipe.CabinId),
+                    new ChassisFront(chassisRecipe.FrontId)
+                };
 
-            CheckChassisParts(chassisParts);
+                CheckChassisParts(chassisParts);
 
-            SteelInventory += _steelSubcontractor.OrderSteel(chassisRecipe.Cost).Select(d => d.Amount).Sum();
-            CheckForMaterials(chassisRecipe.Cost);
-            SteelInventory -= chassisRecipe.Cost;
+                SteelInventory += _steelSubcontractor.OrderSteel(chassisRecipe.Cost).Select(d => d.Amount).Sum();
+                CheckForMaterials(chassisRecipe.Cost);
+                SteelInventory -= chassisRecipe.Cost;
 
-            var chassisWelder = new ChassisWelder();
+                var chassisWelder = new ChassisWelder();
 
-            chassisWelder.StartWeld(chassisParts[0]);
-            chassisWelder.ContinueWeld(chassisParts[1], numberOfDoors);
-            chassisWelder.FinishWeld(chassisParts[2]);
- 
-            return chassisWelder.GetChassis();
+                chassisWelder.StartWeld(chassisParts[0]);
+                chassisWelder.ContinueWeld(chassisParts[1], numberOfDoors);
+                chassisWelder.FinishWeld(chassisParts[2]);
+
+                return chassisWelder.GetChassis();
+            });
         }
 
         public int SteelInventory { get; private set; }

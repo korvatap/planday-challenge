@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using CarFactory.Mappers;
 using CarFactory.Models;
 using CarFactory_Domain;
@@ -28,13 +29,13 @@ namespace CarFactory.Controllers
 
         [ProducesResponseType(typeof(BuildCarOutputModel), StatusCodes.Status200OK)]
         [HttpPost]
-        public object Post([FromBody] [Required] BuildCarInputModel carsSpecs)
+        public async Task<object> Post([FromBody] [Required] BuildCarInputModel carsSpecs)
         {
             var wantedCars = _carSpecificationMapper.Map(carsSpecs);
             //Build cars
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var cars = _carFactory.BuildCars(wantedCars);
+            var cars = await _carFactory.BuildCars(wantedCars);
             stopwatch.Stop();
 
             //Create response and return

@@ -1,9 +1,10 @@
-﻿using CarFactory_Domain;
+﻿using System.Threading.Tasks;
+using CarFactory_Domain;
 
 namespace CarFactory_Factory
 {
     public interface IChassisProvider
     {
-        Chassis GetChassis(Manufacturer manufacturer, int numberOfDoors);
+        Task<Chassis> GetChassis(Manufacturer manufacturer, int numberOfDoors);
     }
 }

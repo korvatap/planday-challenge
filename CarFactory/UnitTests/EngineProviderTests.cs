@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CarFactory_Domain;
 using CarFactory_Domain.Engine.EngineSpecifications;
 using CarFactory_Engine;
@@ -14,7 +15,7 @@ namespace UnitTests
     public class EngineProviderTests
     {
         [Theory, AutoFakeData]
-        public void EngineProvider_GetEngine_GasolineV6_Success(
+        public async Task EngineProvider_GetEngine_GasolineV6_Success(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
@@ -22,7 +23,7 @@ namespace UnitTests
             Manufacturer manufacturer,
             List<SteelDelivery> steelDeliveries,
             int expectedPistons) =>
-            BasicGetEngineTest(
+            await BasicGetEngineTest(
                 getPistons,
                 steelSubContractor,
                 getEngineSpecification,
@@ -35,7 +36,7 @@ namespace UnitTests
             );
 
         [Theory, AutoFakeData]
-        public void EngineProvider_GetEngine_GasolineV8_Success(
+        public async Task EngineProvider_GetEngine_GasolineV8_Success(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
@@ -43,7 +44,7 @@ namespace UnitTests
             Manufacturer manufacturer,
             List<SteelDelivery> steelDeliveries,
             int expectedPistons) =>
-            BasicGetEngineTest(
+            await BasicGetEngineTest(
                 getPistons,
                 steelSubContractor,
                 getEngineSpecification,
@@ -56,7 +57,7 @@ namespace UnitTests
             );
 
         [Theory, AutoFakeData]
-        public void EngineProvider_GetEngine_GasolineV12_Success(
+        public async Task EngineProvider_GetEngine_GasolineV12_Success(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
@@ -64,7 +65,7 @@ namespace UnitTests
             Manufacturer manufacturer,
             List<SteelDelivery> steelDeliveries,
             int expectedPistons) =>
-            BasicGetEngineTest(
+            await BasicGetEngineTest(
                 getPistons,
                 steelSubContractor,
                 getEngineSpecification,
@@ -77,7 +78,7 @@ namespace UnitTests
             );
 
         [Theory, AutoFakeData]
-        public void EngineProvider_GetEngine_Diesel_Success(
+        public async Task EngineProvider_GetEngine_Diesel_Success(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
@@ -85,7 +86,7 @@ namespace UnitTests
             Manufacturer manufacturer,
             List<SteelDelivery> steelDeliveries,
             int expectedPistons) =>
-            BasicGetEngineTest(
+            await BasicGetEngineTest(
                 getPistons,
                 steelSubContractor,
                 getEngineSpecification,
@@ -97,7 +98,7 @@ namespace UnitTests
                 false
             );
 
-        private static void BasicGetEngineTest(
+        private static async Task BasicGetEngineTest(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
             IGetEngineSpecificationQuery getEngineSpecification,
@@ -116,7 +117,7 @@ namespace UnitTests
             A.CallTo(() => getPistons.Get(A<int>._)).Returns(expectedPistons);
 
             // Act
-            var engine = sut.GetEngine(manufacturer);
+            var engine = await sut.GetEngine(manufacturer);
 
             // Assert
             engine.IsFinished.Should().BeTrue();

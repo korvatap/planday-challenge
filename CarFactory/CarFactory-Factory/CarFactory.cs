@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using CarFactory_Storage;
 
 namespace CarFactory_Factory
@@ -17,11 +20,11 @@ namespace CarFactory_Factory
         private IStorageProvider _storageProvider;
 
         public CarFactory(
-            IChassisProvider chassisProvider, 
-            IEngineProvider engineProvider, 
-            IPainter painter, 
-            IInteriorProvider interiorProvider, 
-            IWheelProvider wheelProvider, 
+            IChassisProvider chassisProvider,
+            IEngineProvider engineProvider,
+            IPainter painter,
+            IInteriorProvider interiorProvider,
+            IWheelProvider wheelProvider,
             ICarAssembler carAssembler,
             IStorageProvider storageProvider)
         {
@@ -34,20 +37,47 @@ namespace CarFactory_Factory
             _storageProvider = storageProvider;
         }
 
-        public IEnumerable<Car> BuildCars(IEnumerable<CarSpecification> specs)
+        public async Task<IEnumerable<Car>> BuildCars(IEnumerable<CarSpecification> specs)
         {
             var cars = new List<Car>();
-            foreach(var spec in specs)
-            {
-                var chassis = _chassisProvider.GetChassis(spec.Manufacturer, spec.NumberOfDoors);
-                var engine = _engineProvider.GetEngine(spec.Manufacturer);
-                var interior = _interiorProvider.GetInterior(spec);
-                var wheels = _wheelProvider.GetWheels();
-                var car = _carAssembler.AssembleCar(chassis, engine, interior, wheels);
-                var paintedCar = _painter.PaintCar(car, spec.PaintJob);
-                cars.Add(paintedCar);
-            }
+
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+            await specs.AsyncParallelForEach(async spec =>
+                {
+                    var chassisTask = _chassisProvider.GetChassis(spec.Manufacturer, spec.NumberOfDoors);
+                    var engineTask = _engineProvider.GetEngine(spec.Manufacturer);
+                    await Task.WhenAll(chassisTask, engineTask);
+                    var interior = _interiorProvider.GetInterior(spec);
+                    var wheels = _wheelProvider.GetWheels();
+                    var car = _carAssembler.AssembleCar(chassisTask.Result, engineTask.Result, interior, wheels);
+                    var paintedCar = _painter.PaintCar(car, spec.PaintJob);
+                    cars.Add(paintedCar);
+                }, 20, TaskScheduler.FromCurrentSynchronizationContext()
+            );
+
             return cars;
+        }
+    }
+
+    public static class AsyncExtensions
+    {
+        public static Task AsyncParallelForEach<T>(this IEnumerable<T> source, Func<T, Task> body,
+            int maxDegreeOfParallelism = DataflowBlockOptions.Unbounded, TaskScheduler scheduler = null)
+        {
+            var options = new ExecutionDataflowBlockOptions
+            {
+                MaxDegreeOfParallelism = maxDegreeOfParallelism
+            };
+            if (scheduler != null)
+                options.TaskScheduler = scheduler;
+
+            var block = new ActionBlock<T>(body, options);
+
+            foreach (var item in source)
+                block.Post(item);
+
+            block.Complete();
+            return block.Completion;
         }
     }
 }

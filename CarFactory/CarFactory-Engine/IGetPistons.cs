@@ -1,7 +1,9 @@
-﻿namespace CarFactory_Engine
+﻿using System.Threading.Tasks;
+
+namespace CarFactory_Engine
 {
     public interface IGetPistons
     {
-        int Get(int amount);   
+        Task<int> Get(int amount);   
     }
 }
