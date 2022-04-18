@@ -1,41 +1,46 @@
 using System;
+using System.Collections.Generic;
 using CarFactory_Domain;
 using CarFactory_Domain.Engine;
 using CarFactory_Paint;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Drawing;
+using Xunit;
 
 namespace UnitTests
 {
-    [TestClass]
     public class PainterTests
     {
-        [TestMethod]
-        public void Painter_PaintJobTest()
+        [Theory, AutoFakeData]
+        public void Painter_PaintJobTest(
+            SingleColorPaintJob singleColor,
+            Engine engine,
+            Interior interior,
+            Chassis chassis,
+            List<Wheel> wheels)
         {
             // Arrange
-            var singleColor = new SingleColorPaintJob(Color.Aqua);
             var painter = new Painter();
-            var car = new Car(new Chassis("", true), new Engine(new EngineBlock(10), "Test"), new Interior(),
-                new Wheel[4]);
+            var car = new Car(chassis, engine, interior, wheels);
             
             // Act
             painter.PaintCar(car, singleColor);
             
             // Assert
             var job = (SingleColorPaintJob) car.PaintJob;
-            job.Color.Should().Be(Color.Aqua);
+            job.Color.Should().Be(singleColor.Color);
             job.AreInstructionsUnlocked().Should().BeTrue();
         }
 
-        [TestMethod]
-        public void Painter_PaintJob_ThrowsExceptionWhenNoChassis()
+        [Theory, AutoFakeData]
+        public void Painter_PaintJob_ThrowsExceptionWhenNoChassis(
+            SingleColorPaintJob singleColor,
+            Engine engine,
+            Interior interior,
+            List<Wheel> wheels)
         {
             // Arrange
-            var singleColor = new SingleColorPaintJob(Color.Aqua);
             var painter = new Painter();
-            var car = new Car(null, new Engine(new EngineBlock(10), "Test"), new Interior(), new Wheel[4]);
+            var car = new Car(null, engine, interior, wheels);
             
             // Act & Assert
             Action action = () => painter.PaintCar(car, singleColor);

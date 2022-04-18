@@ -4,68 +4,57 @@ using System.Linq;
 using CarFactory_Domain;
 using CarFactory_Storage;
 using CarFactory_Wheels;
+using FakeItEasy;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Xunit;
 
 namespace UnitTests
 {
-    [TestClass]
     public class WheelProviderTests
     {
-        private Mock<IGetRubberQuery> _rubberQueryProvider;
-
-        [TestInitialize()]
-        public void TestInitialize()
-        {
-            _rubberQueryProvider = new Mock<IGetRubberQuery>();
-        }
-
-        [TestMethod]
-        public void WheelProvider_GetWheels_Success()
+        [Theory, AutoFakeData]
+        public void WheelProvider_GetWheels_Success(IGetRubberQuery rubberQueryProvider, Part part)
         {
             // Arrange
-            _rubberQueryProvider.Setup(p => p.Get())
-                .Returns(new List<Part>
-                {
-                    new() {Manufacturer = Manufacturer.Planborgini, PartType = PartType.Rubber}
-                });
-
+            part.PartType = PartType.Rubber;
+            A.CallTo(() => rubberQueryProvider.Get()).Returns(new []{part});
+         
             // Act
-            var wheelProvider = new WheelProvider(_rubberQueryProvider.Object);
+            var wheelProvider = new WheelProvider(rubberQueryProvider);
             var actual = wheelProvider.GetWheels().ToList();
 
             // Assert
             actual.Count.Should().Be(4);
             actual.ForEach(w => w.Manufacturer.Should().Be(Manufacturer.Planborgini));
+            A.CallTo(() => rubberQueryProvider.Get()).MustHaveHappenedOnceExactly();
         }
 
-        [TestMethod]
-        public void WheelProvider_GetWheels_ThrowsWhenReturningNotRubber()
+        [Theory, AutoFakeData]
+        public void WheelProvider_GetWheels_ThrowsWhenReturningNotRubber(IGetRubberQuery rubberQueryProvider, Part part)
         {
             // Arrange
-            _rubberQueryProvider.Setup(p => p.Get())
-                .Returns(new List<Part>
-                {
-                    new() {Manufacturer = Manufacturer.Planborgini, PartType = PartType.Cotton}
-                });
+            part.PartType = PartType.Cotton;
+            A.CallTo(() => rubberQueryProvider.Get()).Returns(new []{part});
 
             // Act
-            var wheelProvider = new WheelProvider(_rubberQueryProvider.Object);
+            var wheelProvider = new WheelProvider(rubberQueryProvider);
             Action action = () => wheelProvider.GetWheels();
             action.Should().Throw<Exception>().WithMessage("parts must be rubber");
+            A.CallTo(() => rubberQueryProvider.Get()).MustHaveHappenedOnceExactly();
         }
         
-        [TestMethod]
-        public void WheelProvider_GetWheels_ThrowsWhenEmptyPartsList()
+        [Theory, AutoFakeData]
+        public void WheelProvider_GetWheels_ThrowsWhenEmptyPartsList(IGetRubberQuery rubberQueryProvider)
         {
             // Arrange
-            _rubberQueryProvider.Setup(p => p.Get()).Returns(new List<Part>());
+            A.CallTo(() => rubberQueryProvider.Get()).Returns(Array.Empty<Part>());
 
             // Act
-            var wheelProvider = new WheelProvider(_rubberQueryProvider.Object);
+            var wheelProvider = new WheelProvider(rubberQueryProvider);
             Action action = () => wheelProvider.GetWheels();
             action.Should().Throw<Exception>().WithMessage("Sequence contains no elements");
-        } 
+            A.CallTo(() => rubberQueryProvider.Get()).MustHaveHappenedOnceExactly();
+        }
     }
 }

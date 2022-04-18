@@ -12,10 +12,8 @@ namespace CarFactory_Interior.Builders
         public List<Speaker> BuildFrontWindowSpeakers(IEnumerable<SpeakerSpecification> specification)
         {
             var specifications = specification.ToArray();
-            if (specifications.ToArray().Length > 2) throw new ArgumentException("More than 2 speakers aren't supported");
-            return specifications.Select(spec =>
-                new Speaker { IsSubwoofer = spec.IsSubwoofer }
-            ).ToList();
+            if (specifications.Length > 2) throw new ArgumentException("More than 2 speakers aren't supported");
+            return BuildDoorSpeakers(specifications);
         }
 
         public List<Speaker> BuildDoorSpeakers(IEnumerable<SpeakerSpecification> specification) =>
