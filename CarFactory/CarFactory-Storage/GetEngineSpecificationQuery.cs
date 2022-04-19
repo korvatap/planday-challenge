@@ -5,7 +5,6 @@ using CarFactory_Domain.Engine.EngineSpecifications;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
-using System.Threading;
 
 namespace CarFactory_Storage
 {

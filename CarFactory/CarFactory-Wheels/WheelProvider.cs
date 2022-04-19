@@ -29,16 +29,17 @@ namespace CarFactory_Wheels
             };
         }
 
-        private Wheel CreateWheel(ref IEnumerable<Part> allRubber)
+        private static Wheel CreateWheel(ref IEnumerable<Part> allRubber)
         {
             var rubber = allRubber.Take(50);
-            
-            if (rubber.Any(x => x.PartType != PartType.Rubber))
+
+            var enumerable = rubber.ToList();
+            if (enumerable.Any(x => x.PartType != PartType.Rubber))
             {
                 throw new Exception("parts must be rubber");
             }
             
-            return new Wheel(){Manufacturer = rubber.First().Manufacturer};
+            return new Wheel {Manufacturer = enumerable.First().Manufacturer};
         }
     }
 }

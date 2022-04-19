@@ -9,17 +9,13 @@ namespace CarFactory_Chassis
 
         public override string GetChassisType()
         {
-            switch (_typeId)
+            return TypeId switch
             {
-                case 0:
-                    return "Sedan";
-                case 1:
-                    return "Pickup";
-                case 2:
-                    return "Hatchback";
-                default:
-                    throw new Exception("Unknown trunk type");
-            }
+                0 => "Sedan",
+                1 => "Pickup",
+                2 => "Hatchback",
+                _ => throw new Exception("Unknown trunk type")
+            };
         }
 
         public override string GetType()

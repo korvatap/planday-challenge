@@ -11,7 +11,7 @@ namespace CarFactory_Chassis
 
         public override string GetChassisType()
         {
-            return _typeId switch
+            return TypeId switch
             {
                 0 => "Two Door",
                 1 => "Four Door",

@@ -22,8 +22,8 @@ namespace UnitTests
             cars.AddRange(GetInputModel(20, Manufacturer.Volksday, 5, "stripe", "red", "black", null));
             cars.AddRange(GetInputModel(40, Manufacturer.PlandayMotorWorks, 3, "dot", "black", null, "yellow"));
             cars.AddRange(GetInputModel(20, Manufacturer.Plandrover, 5, "stripe", "green", "gold", null));
-            
-            var inputModels = new BuildCarInputModel {Cars = cars};
+
+            var inputModels = new BuildCarInputModel(cars);
             var sut = new CarSpecificationMapper();
 
             // Act
@@ -51,9 +51,11 @@ namespace UnitTests
             foreach (var cs in filtered)
             {
                 cs.Manufacturer.Should().Be(expectedManufacturer);
-                if(cs.PaintJob is StripedPaintJob) AssertStripedPaintJob(cs.PaintJob, expectedBaseColor, expectedStripeColor!.Value);
-                if(cs.PaintJob is DottedPaintJob) AssertDottedPaintJob(cs.PaintJob, expectedBaseColor, expectedDotColor!.Value);
-                if(cs.PaintJob is SingleColorPaintJob) AssertSinglePaintJob(cs.PaintJob, expectedBaseColor);
+                if (cs.PaintJob is StripedPaintJob)
+                    AssertStripedPaintJob(cs.PaintJob, expectedBaseColor, expectedStripeColor!.Value);
+                if (cs.PaintJob is DottedPaintJob)
+                    AssertDottedPaintJob(cs.PaintJob, expectedBaseColor, expectedDotColor!.Value);
+                if (cs.PaintJob is SingleColorPaintJob) AssertSinglePaintJob(cs.PaintJob, expectedBaseColor);
                 cs.NumberOfDoors.Should().Be(numberOfDoors);
                 var doorSpeakers = cs.DoorSpeakers.ToList();
                 var windowSpeakers = cs.FrontWindowSpeakers.ToList();
@@ -63,7 +65,7 @@ namespace UnitTests
                 windowSpeakers.First().IsSubwoofer.Should().BeFalse();
             }
         }
-        
+
         private static void AssertSinglePaintJob(PaintJob paintJob, Color expectedBaseColor)
         {
             var singleColorPaintJob = (SingleColorPaintJob) paintJob;
@@ -76,7 +78,7 @@ namespace UnitTests
             stripedJob.BaseColor.Should().Be(expectedBaseColor);
             stripedJob.StripeColor.Should().Be(expectedStripeColor);
         }
-        
+
         private static void AssertDottedPaintJob(PaintJob paintJob, Color expectedBaseColor, Color expectedDotColor)
         {
             var dottedJob = (DottedPaintJob) paintJob;
@@ -95,36 +97,16 @@ namespace UnitTests
         {
             return new List<BuildCarInputModelItem>
             {
-                new()
-                {
-                    Amount = amount,
-                    Specification = new CarSpecificationInputModel
-                    {
-                        DoorSpeakers = new[]
-                        {
-                            new SpeakerSpecificationInputModel
-                            {
-                                IsSubwoofer = true
-                            }
-                        },
-                        FrontWindowSpeakers = new[]
-                        {
-                            new SpeakerSpecificationInputModel
-                            {
-                                IsSubwoofer = false
-                            }
-                        },
-                        Manufacturer = manufacturer,
-                        NumberOfDoors = numberOfDoors,
-                        Paint = new CarPaintSpecificationInputModel
-                        {
-                            BaseColor = baseColor,
-                            Type = type,
-                            StripeColor = stripeColor,
-                            DotColor = dotColor
-                        }
-                    }
-                }
+                new(
+                    amount,
+                    new CarSpecificationInputModel(
+                        numberOfDoors,
+                        new CarPaintSpecificationInputModel(baseColor, type, stripeColor, dotColor),
+                        manufacturer,
+                        new[] {new SpeakerSpecificationInputModel(true)},
+                        new[] {new SpeakerSpecificationInputModel(false)}
+                    )
+                )
             };
         }
     }

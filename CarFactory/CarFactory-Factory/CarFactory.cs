@@ -1,10 +1,6 @@
 ﻿using CarFactory_Domain;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -51,8 +47,6 @@ namespace CarFactory_Factory
 
             await specs.AsyncParallelForEach(async spec =>
                 {
-                    var stopwatch = new Stopwatch();
-                    stopwatch.Start();
                     var chassisTask = _chassisProvider.GetChassis(spec.Manufacturer, spec.NumberOfDoors);
                     var engineTask = _engineProvider.GetEngine(spec.Manufacturer);
                     await Task.WhenAll(chassisTask, engineTask);
@@ -61,8 +55,6 @@ namespace CarFactory_Factory
                     var car = _carAssembler.AssembleCar(chassisTask.Result, engineTask.Result, interior, wheels);
                     var paintedCar = _painter.PaintCar(car, spec.PaintJob);
                     cars.Add(paintedCar);
-                    stopwatch.Stop();
-                    Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
                 }, -1, TaskScheduler.FromCurrentSynchronizationContext()
             );
 

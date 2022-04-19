@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CarFactory_Domain;
+﻿using CarFactory_Domain;
 
 namespace CarFactory_Storage
 {

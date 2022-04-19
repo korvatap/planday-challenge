@@ -2,8 +2,5 @@
 
 namespace CarFactory.Models
 {
-    public class BuildCarInputModel
-    {
-        public IEnumerable<BuildCarInputModelItem> Cars { get; set; }
-    }
+    public sealed record BuildCarInputModel(IEnumerable<BuildCarInputModelItem> Cars);
 }

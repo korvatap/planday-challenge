@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CarFactory_Domain;
 using CarFactory_Storage;
 using CarFactory_Wheels;
 using FakeItEasy;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace UnitTests

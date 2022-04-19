@@ -10,7 +10,6 @@ using CarFactory_Domain.Engine;
 using CarFactory_Factory;
 using FakeItEasy;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace UnitTests

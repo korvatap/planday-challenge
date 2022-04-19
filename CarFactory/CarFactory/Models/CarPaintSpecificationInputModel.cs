@@ -1,10 +1,9 @@
 ﻿namespace CarFactory.Models
 {
-    public class CarPaintSpecificationInputModel
-    {
-        public string Type { get; set; }
-        public string BaseColor { get; set; }
-        public string? StripeColor { get; set; }
-        public string? DotColor { get; set; }
-    }
+    public sealed record CarPaintSpecificationInputModel(
+        string Type,
+        string BaseColor,
+        string? StripeColor,
+        string? DotColor
+    );
 }

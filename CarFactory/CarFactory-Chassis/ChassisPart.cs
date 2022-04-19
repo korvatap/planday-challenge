@@ -2,11 +2,13 @@
 {
     public abstract class ChassisPart
     {
-        public readonly int _typeId;
-        public ChassisPart(int typeId)
+        protected readonly int TypeId;
+
+        protected ChassisPart(int typeId)
         {
-            _typeId = typeId;
+            TypeId = typeId;
         }
+        
         public new abstract string GetType();
 
         public abstract string GetChassisType();

@@ -10,17 +10,13 @@ namespace CarFactory_Chassis
         }
         public override string GetChassisType()
         {
-            switch (_typeId)
+            return TypeId switch
             {
-                case 0:
-                    return "Sportcar";
-                case 1:
-                    return "Offroader";
-                case 2:
-                    return "Family car";
-                default:
-                    throw new Exception("Unknown frontend type");
-            }
+                0 => "Sportcar",
+                1 => "Offroader",
+                2 => "Family car",
+                _ => throw new Exception("Unknown frontend type")
+            };
         }
 
         public override string GetType()
