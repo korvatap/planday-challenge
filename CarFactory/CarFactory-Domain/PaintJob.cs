@@ -38,6 +38,16 @@ namespace CarFactory_Domain
             return result.ToString().GetHashCode();
         }
 
+        public static long EncodeChars(char[] chars)
+        {
+            var result = new StringBuilder();
+            var key = "Planborghini";
+            for (int c = 0; c < chars.Length; c++)
+                result.Append((char)((uint)chars[c] ^ (uint)key[c % key.Length]));
+
+            return result.ToString().GetHashCode();
+        }
+
         private static string CreateString(int stringLength)
         {
             var rd = new Random(((int) DateTime.Now.Ticks)/5*5);

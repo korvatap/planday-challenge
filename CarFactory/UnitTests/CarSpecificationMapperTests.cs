@@ -17,8 +17,8 @@ namespace UnitTests
         {
             // Arrange
             var cars = new List<BuildCarInputModelItem>();
-            cars.AddRange(GetInputModel(75, Manufacturer.PlanfaRomeo, 5, "stripe", "blue", "orange", null));
-            cars.AddRange(GetInputModel(15, Manufacturer.Planborgini, 3, "dot", "pink", null, "red"));
+            cars.AddRange(GetInputModel(75, Manufacturer.PlanfaRomeo, 5, "Stripe", "blue", "orange", null));
+            cars.AddRange(GetInputModel(15, Manufacturer.Planborgini, 3, "Dot", "pink", null, "red"));
             cars.AddRange(GetInputModel(20, Manufacturer.Volksday, 5, "stripe", "red", "black", null));
             cars.AddRange(GetInputModel(40, Manufacturer.PlandayMotorWorks, 3, "dot", "black", null, "yellow"));
             cars.AddRange(GetInputModel(20, Manufacturer.Plandrover, 5, "stripe", "green", "gold", null));
@@ -97,16 +97,17 @@ namespace UnitTests
         {
             return new List<BuildCarInputModelItem>
             {
-                new(
-                    amount,
-                    new CarSpecificationInputModel(
+                new()
+                {
+                    Amount = amount,
+                    Specification = new CarSpecificationInputModel(
                         numberOfDoors,
-                        new CarPaintSpecificationInputModel(baseColor, type, stripeColor, dotColor),
+                        new CarPaintSpecificationInputModel(type, baseColor, stripeColor, dotColor),
                         manufacturer,
-                        new[] {new SpeakerSpecificationInputModel(true)},
-                        new[] {new SpeakerSpecificationInputModel(false)}
+                        new[] {new SpeakerSpecificationInputModel(false)},
+                        new[] {new SpeakerSpecificationInputModel(true)}
                     )
-                )
+                }
             };
         }
     }

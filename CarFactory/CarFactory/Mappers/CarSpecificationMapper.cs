@@ -24,27 +24,18 @@ namespace CarFactory.Mappers
                 for (var i = 1; i <= spec.Amount; i++)
                 {
                     if (spec.Specification.NumberOfDoors % 2 == 0)
-                    {
                         throw new ArgumentException("Must give an odd number of doors");
-                    }
 
-                    PaintJob? paint;
                     var baseColor = Color.FromName(spec.Specification.Paint.BaseColor);
-                    switch (spec.Specification.Paint.Type.ToLower())
+                    PaintJob paint = spec.Specification.Paint.Type.ToLower() switch
                     {
-                        case "single":
-                            paint = new SingleColorPaintJob(baseColor);
-                            break;
-                        case "stripe":
-                            paint = new StripedPaintJob(baseColor,
-                                Color.FromName(spec.Specification.Paint.StripeColor!));
-                            break;
-                        case "dot":
-                            paint = new DottedPaintJob(baseColor, Color.FromName(spec.Specification.Paint.DotColor!));
-                            break;
-                        default:
-                            throw new ArgumentException($"Unknown paint type {spec.Specification.Paint.Type}");
-                    }
+                        "single" => new SingleColorPaintJob(baseColor),
+                        "stripe" => new StripedPaintJob(baseColor,
+                            Color.FromName(spec.Specification.Paint.StripeColor!)),
+                        "dot" => new DottedPaintJob(baseColor,
+                            Color.FromName(spec.Specification.Paint.DotColor!)),
+                        _ => throw new ArgumentException($"Unknown paint type {spec.Specification.Paint.Type}")
+                    };
 
                     var dashboardSpeakers = spec.Specification.FrontWindowSpeakers
                         .Select(s => new CarSpecification.SpeakerSpecification {IsSubwoofer = s.IsSubwoofer});

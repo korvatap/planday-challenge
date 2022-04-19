@@ -95,7 +95,7 @@ namespace CarFactory_Engine
             return amount;
         }
 
-        private Task InstallFuelInjectors(Engine engine, Propulsion propulsionType)
+        private static Task InstallFuelInjectors(Engine engine, Propulsion propulsionType)
         {
             //Do work
             return Task.Run(() =>
@@ -105,7 +105,7 @@ namespace CarFactory_Engine
             });
         }
 
-        private Task InstallPistons(Engine engine, int pistons)
+        private static Task InstallPistons(Engine engine, int pistons)
         {
             //Do work
             return Task.Run(() =>
@@ -115,13 +115,17 @@ namespace CarFactory_Engine
             });
         }
 
-        private void InstallSparkPlugs(Engine engine)
+        private static void InstallSparkPlugs(Engine engine)
         {
             if (!engine.PropulsionType.HasValue)
                 throw new InvalidOperationException($"Propulsion type must be known before installing spark plugs");
 
-            SlowWorker.FakeWorkingForMillis(engine.EngineBlock.CylinderCount * 15);
-            engine.HasSparkPlugs = true;
+            if(engine.PropulsionType.Value == Propulsion.Gasoline)
+            {
+                //Do work 
+                SlowWorker.FakeWorkingForMillis(engine.EngineBlock.CylinderCount * 15);
+                engine.HasSparkPlugs = true;
+            }   
         }
     }
 }

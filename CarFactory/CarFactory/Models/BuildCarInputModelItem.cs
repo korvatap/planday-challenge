@@ -2,8 +2,9 @@
 
 namespace CarFactory.Models
 {
-    public sealed record BuildCarInputModelItem(
-        [property: Required] int Amount,
-        [property: Required] CarSpecificationInputModel Specification
-    );
+    public sealed class BuildCarInputModelItem
+    {
+        [Required] public int Amount { get; init; }
+        [Required] public CarSpecificationInputModel Specification { get; init; }
+    }
 }
