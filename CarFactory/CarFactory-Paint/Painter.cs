@@ -33,17 +33,20 @@ namespace CarFactory_Paint
         private static string FindPaintPassword(int passwordLength, long encodedPassword)
         {
             var rd = new Random();
-            var chars = new char[passwordLength];
-            
-            while (PaintJob.EncodeChars(chars) != encodedPassword)
+            Span<char> chars = stackalloc char[passwordLength];
+            var str = string.Empty;
+
+            while (PaintJob.EncodeString(str) != encodedPassword)
             {
                 for (var i = 0; i < passwordLength; i++)
                 {
                     chars[i] = PaintJob.ALLOWED_CHARACTERS[rd.Next(0, PaintJob.ALLOWED_CHARACTERS.Length)];
                 }
+
+                str = chars.ToString();
             }
 
-            return new string(chars); 
+            return str;
         }
     }
 }

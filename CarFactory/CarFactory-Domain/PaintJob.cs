@@ -31,23 +31,14 @@ namespace CarFactory_Domain
 
         public static long EncodeString(string text)
         {
-            var result = new StringBuilder();
-            var key = "Planborghini";
-            for (int c = 0; c < text.Length; c++)
-                result.Append((char)((uint)text[c] ^ (uint)key[c % key.Length]));
+            Span<char> result = stackalloc char[text.Length];
+            
+            const string key = "Planborghini";
+            for (var c = 0; c < text.Length; c++)
+                result[c] = ((char)(text[c] ^ (uint)key[c % key.Length]));
             return result.ToString().GetHashCode();
         }
-
-        public static long EncodeChars(char[] chars)
-        {
-            var result = new StringBuilder();
-            var key = "Planborghini";
-            for (int c = 0; c < chars.Length; c++)
-                result.Append((char)((uint)chars[c] ^ (uint)key[c % key.Length]));
-
-            return result.ToString().GetHashCode();
-        }
-
+   
         private static string CreateString(int stringLength)
         {
             var rd = new Random(((int) DateTime.Now.Ticks)/5*5);
