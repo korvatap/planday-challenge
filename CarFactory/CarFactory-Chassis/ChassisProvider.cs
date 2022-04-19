@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CarFactory_Domain;
 using CarFactory_Factory;
@@ -35,12 +37,14 @@ namespace CarFactory_Chassis
 
                 CheckChassisParts(chassisParts);
 
-                SteelInventory += _steelSubcontractor.OrderSteel(chassisRecipe.Cost).Select(d => d.Amount).Sum();
+                var steel = _steelSubcontractor.OrderSteel(chassisRecipe.Cost).Select(d => d.Amount).Sum();
+                Interlocked.Add(ref _steelInventory, steel);
+
                 CheckForMaterials(chassisRecipe.Cost);
-                SteelInventory -= chassisRecipe.Cost;
+                
+                Interlocked.Add(ref _steelInventory, -chassisRecipe.Cost);
 
                 var chassisWelder = new ChassisWelder();
-
                 chassisWelder.StartWeld(chassisParts[0]);
                 chassisWelder.ContinueWeld(chassisParts[1], numberOfDoors);
                 chassisWelder.FinishWeld(chassisParts[2]);
@@ -48,12 +52,12 @@ namespace CarFactory_Chassis
                 return chassisWelder.GetChassis();
             });
         }
-
-        public int SteelInventory { get; private set; }
+        
+        private int _steelInventory;
 
         private void CheckForMaterials(int cost)
         {
-            if (SteelInventory < cost)
+            if (_steelInventory < cost)
             {
                 throw new Exception("Not enough chassis material");
             }

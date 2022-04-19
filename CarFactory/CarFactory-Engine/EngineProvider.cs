@@ -19,6 +19,9 @@ namespace CarFactory_Engine
         private readonly IGetEngineSpecificationQuery _getEngineSpecification;
         private readonly IMemoryCache _cache;
 
+        private static readonly MemoryCacheEntryOptions MemoryCacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
         public EngineProvider(
             IGetPistons getPistons,
             ISteelSubcontractor steelSubContractor,
@@ -33,6 +36,11 @@ namespace CarFactory_Engine
 
         public async Task<Engine> GetEngine(Manufacturer manufacturer)
         {
+            if (_cache.TryGetValue(manufacturer, out Engine cachedEngine))
+            {
+                return cachedEngine;
+            }
+            
             var specification = _getEngineSpecification.GetForManufacturer(manufacturer);
 
             var engineBlockTask = MakeEngineBlock(specification.CylinderCount);
@@ -51,6 +59,8 @@ namespace CarFactory_Engine
 
             if (!engine.IsFinished)
                 throw new InvalidOperationException("Cannot return an unfinished engine");
+
+            _cache.Set(manufacturer, engine, MemoryCacheEntryOptions);
 
             return engine;
         }
@@ -71,7 +81,6 @@ namespace CarFactory_Engine
                 return engineBlock;
             });
         }
-
 
         private int GetSteel(int amount)
         {
